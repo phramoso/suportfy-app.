@@ -1,0 +1,108 @@
+{
+  "usuarios": [
+    {
+      "id": "1773807837807",
+      "nome": "Pedro Henrique Ramos",
+      "email": "phramosoliveira@gmail.com",
+      "senha": "Phro04012002",
+      "telefone": "(79) 99907-6842",
+      "cpf": "079.218.145-06",
+      "cep": "49030-840",
+      "cidade": "Aracaju",
+      "bairro": "Farolândia",
+      "rua": "Rua Maria Barros",
+      "numero": "62",
+      "foto": "https://ui-avatars.com/api/?name=Pedro Henrique Ramos&background=random"
+    },
+    {
+      "id": "1773808164966",
+      "nome": "Pedro gui",
+      "email": "seila@gmail.com",
+      "senha": "Phro04012002",
+      "telefone": "(82) 91389-1231",
+      "cpf": "312.448.745-15",
+      "cep": "49030-840",
+      "cidade": "Aracaju",
+      "bairro": "Farolândia",
+      "rua": "Rua Maria Barros",
+      "numero": "62",
+      "foto": "https://ui-avatars.com/api/?name=Pedro gui&background=random"
+    }
+  ],
+  "anuncios": [
+    {
+      "id": "75b6",
+      "titulo": "Pedro Henrique Ramos",
+      "categoria": "Servidores",
+      "preco": "150",
+      "descricao": "dasdsa",
+      "horarios": "asdas",
+      "raioAtuacao": "Apenas no meu bairro",
+      "autorId": "1773807837807",
+      "autorNome": "Pedro Henrique Ramos",
+      "bairro": "Farolândia",
+      "cidade": "Aracaju",
+      "lat": -10.9473,
+      "lng": -37.078,
+      "estrelas": 5,
+      "totalAvaliacoes": 0,
+      "certificacoes": [
+        "asdas"
+      ]
+    }
+  ],
+  "pedidos": [
+    {
+      "id": "3e0c",
+      "anuncioId": "75b6",
+      "tituloServico": "Pedro Henrique Ramos",
+      "tecnicoId": "1773807837807",
+      "tecnicoNome": "Pedro Henrique Ramos",
+      "tecnicoTelefone": "(79) 99907-6842",
+      "clienteId": "1773808164966",
+      "clienteNome": "Pedro gui",
+      "clienteTelefone": "(82) 91389-1231",
+      "endereco": "Rua Maria Barros, 62 - Farolândia, Aracaju",
+      "problema": "pc n liga",
+      "urgencia": "Urgente",
+      "agendamento": "18/03/2026 às 12:34",
+      "valorServico": 150,
+      "taxaPlataforma": 15,
+      "valorTotal": 165,
+      "status": "concluido",
+      "dataHoraEmissao": "18/03/2026, 01:31:03",
+      "nota": 5
+    }
+  ],
+  "notificacoes": [
+    {
+      "id": "1773808263769",
+      "usuarioId": "1773807837807",
+      "mensagem": "Nova solicitação: Pedro gui precisa de Pedro Henrique Ramos.",
+      "lida": true,
+      "data": "2026-03-18T04:31:03.769Z"
+    },
+    {
+      "id": "1773808313089",
+      "usuarioId": "1773808164966",
+      "mensagem": "Seu serviço \"Pedro Henrique Ramos\" foi aceito por Pedro Henrique Ramos! Realize o pagamento para liberar o contato.",
+      "lida": false,
+      "data": "2026-03-18T04:31:53.089Z"
+    },
+    {
+      "id": "1773808552702",
+      "usuarioId": "1773807837807",
+      "mensagem": "Pagamento confirmado para o serviço: Pedro Henrique Ramos. O WhatsApp do cliente foi liberado!",
+      "lida": true,
+      "data": "2026-03-18T04:35:52.702Z"
+    },
+    {
+      "id": "1773808601961",
+      "usuarioId": "1773807837807",
+      "mensagem": "O cliente confirmou a conclusão de \"Pedro Henrique Ramos\" e te avaliou com 5 estrelas!",
+      "lida": true,
+      "data": "2026-03-18T04:36:41.961Z"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
