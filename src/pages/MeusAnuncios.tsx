@@ -117,9 +117,11 @@ export default function MeusAnuncios() {
                   <span className="text-[10px] font-black text-blue-400 bg-blue-900/30 border border-blue-800/50 px-2 py-1 rounded-md uppercase">
                     {anuncio.categoria}
                   </span>
-                  <h3 className="text-lg font-black text-white mt-1">{anuncio.titulo}</h3>
-                  <p className="text-green-400 font-bold text-sm">{anuncio.preco}</p>
-                </div>
+                  <h3 className="text-lg font-black text-white mt-1 mb-2">{anuncio.titulo}</h3>
+                  <span className="text-xl font-black text-emerald-400">
+                R$ {parseFloat(anuncio.preco.replace(/[^\d,-]/g, '').replace(',', '.') || '0').toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
                 <div className="flex gap-2">
                   <button 
                     onClick={() => navigate(`/editar-anuncio/${anuncio.id}`)} 

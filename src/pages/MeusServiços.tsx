@@ -5,7 +5,7 @@ import { supabase } from '../supabaseClient';
 
 interface Pedido {
   id: number | string;
-  anuncioId?: string | number; // <-- ADICIONADO PARA VINCULAR A NOTA AO CATÁLOGO
+  anuncioId?: string | number;
   clienteId: string | number;
   clienteNome: string;
   clienteTelefone?: string;
@@ -351,20 +351,22 @@ export default function MeusServicos() {
                       {abaAtiva === "cliente" ? (
                         <>
                           <div className="flex justify-between text-xs text-slate-400 font-bold mb-1">
-                            <span>Valor do Serviço:</span> <span className="text-slate-300">R$ {valorServico.toFixed(2)}</span>
+                            <span>Valor do Serviço:</span> <span className="text-slate-300">R$ {valorServico.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                           </div>
                           <div className="flex justify-between text-xs text-slate-400 font-bold mb-2">
-                            <span>Taxa SuportFy:</span> <span className="text-slate-300">R$ {taxa.toFixed(2)}</span>
+                            <span>Taxa SuportFy:</span> <span className="text-slate-300">R$ {taxa.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                           </div>
                           <div className="flex justify-between items-center border-t border-slate-700 pt-2 mt-2">
                             <span className="text-[10px] font-black text-slate-500 uppercase">Total a Pagar</span>
-                            <span className="text-2xl font-black text-green-400">R$ {total.toFixed(2)}</span>
+                            <span className="text-2xl font-black text-green-400">
+                             R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
                           </div>
                         </>
                       ) : (
                         <div className="flex justify-between items-center">
                           <span className="text-[10px] font-black text-slate-500 uppercase">Valor a Receber</span>
-                          <span className="text-2xl font-black text-green-400">R$ {valorServico.toFixed(2)}</span>
+                          <span className="text-2xl font-black text-green-400">R$ {valorServico.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                       )}
                     </div>
@@ -379,7 +381,7 @@ export default function MeusServicos() {
                           style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }} 
                           loading="lazy" 
                           referrerPolicy="no-referrer-when-downgrade" 
-                          src={`https://maps.google.com/maps?q=${encodeURIComponent(pedido.endereco || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                          src={`http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(pedido.endereco || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                         ></iframe>
                           </div>
                         )}

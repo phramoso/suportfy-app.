@@ -281,7 +281,9 @@ export default function DetalhesAnuncio() {
         <div className="lg:col-span-1">
           <div className="bg-slate-800 p-8 rounded-[2.5rem] shadow-2xl border border-slate-700 sticky top-28 text-center sm:text-left">
             <p className="text-slate-500 font-bold text-sm mb-1">Preço estimado</p>
-            <h2 className="text-4xl font-black text-white mb-6">{anuncio.preco}</h2>
+            <h2 className="text-4xl font-black text-white mb-6">
+            R$ {parseFloat(anuncio.preco.replace(/[^\d,-]/g, '').replace(',', '.') || '0').toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </h2>
             
             <div className="space-y-4 mb-8">
               <div className="flex items-center gap-3 text-sm text-slate-400 font-bold"><span>📍</span> {anuncio.bairro}, {anuncio.cidade}</div>

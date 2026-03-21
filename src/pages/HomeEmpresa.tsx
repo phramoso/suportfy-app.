@@ -14,7 +14,7 @@ interface Anuncio {
   distanciaKm?: number;
   descricao: string;
   estrelas: number;
-  totalAvaliacoes: number; // <-- ADICIONADO AQUI
+  totalAvaliacoes: number; 
 }
 
 const calcularDistancia = (lat1: number, lon1: number, lat2: number, lon2: number) => {
@@ -209,7 +209,9 @@ export default function Home() {
                   </div>
 
                   <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-700/50">
-                    <span className="text-xl font-black text-green-400">{anuncio.preco}</span>
+                    <span className="text-xl font-black text-green-400">
+                    R$ {parseFloat(anuncio.preco.replace(/[^\d,-]/g, '').replace(',', '.') || '0').toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
                     <span className="text-blue-500 font-bold text-xs group-hover:translate-x-1 transition-transform">Ver perfil →</span>
                   </div>
                 </div>
