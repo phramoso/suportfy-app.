@@ -31,7 +31,6 @@ interface UsuarioLocal {
   email?: string;
 }
 
-// COMPONENTE VISUAL DA LINHA DO TEMPO
 const TimelineDoPedido = ({ statusAtual }: { statusAtual: string }) => {
   if (statusAtual === 'recusado') return null;
 
@@ -47,16 +46,13 @@ const TimelineDoPedido = ({ statusAtual }: { statusAtual: string }) => {
   return (
     <div className="w-full py-4 mt-2 mb-4 relative px-2">
       <div className="flex items-center justify-between relative">
-        {/* Linha de Fundo Cinza */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-700 rounded-full z-0"></div>
         
-        {/* Linha de Progresso Verde */}
         <div 
           className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-green-500 rounded-full z-0 transition-all duration-700 ease-out"
           style={{ width: `${(Math.max(0, indiceAtual) / (etapas.length - 1)) * 100}%` }}
         ></div>
 
-        {/* Pontos da Timeline */}
         {etapas.map((etapa, index) => {
           const etapaConcluida = index <= indiceAtual;
           const etapaAtiva = index === indiceAtual;
@@ -90,7 +86,6 @@ export default function MeusServicos() {
   const [abaAtiva, setAbaAtiva] = useState<"cliente" | "tecnico">("cliente");
   const [usuarioLocal, setUsuarioLocal] = useState<UsuarioLocal | null>(null);
   
-  // Estados para o Modal de Avaliação
   const [pedidoAvaliacao, setPedidoAvaliacao] = useState<Pedido | null>(null);
   const [notaEstrelas, setNotaEstrelas] = useState(0);
 
@@ -168,10 +163,9 @@ export default function MeusServicos() {
 
   const abrirModalAvaliacao = (pedido: Pedido) => {
     setPedidoAvaliacao(pedido);
-    setNotaEstrelas(0); // Reseta as estrelas
+    setNotaEstrelas(0);
   };
 
-  // <-- FUNÇÃO ATUALIZADA COM A MÁGICA DA REPUTAÇÃO -->
   const enviarAvaliacaoEConcluir = async () => {
     if (!pedidoAvaliacao || notaEstrelas === 0) {
       toast.error("Por favor, selecione pelo menos 1 estrela para avaliar o serviço.");
@@ -179,15 +173,11 @@ export default function MeusServicos() {
     }
 
     try {
-      // 1. Atualiza o status do pedido para concluído
       await atualizarStatusNoBanco(pedidoAvaliacao.id, { status: 'concluido', nota: notaEstrelas });
       
-      // 2. Notifica o técnico
       dispararNotificacao(pedidoAvaliacao.tecnicoId, `O cliente confirmou a conclusão de "${pedidoAvaliacao.tituloServico}" e te avaliou com ${notaEstrelas} estrelas!`);
       
-      // 3. A MÁGICA DA REPUTAÇÃO NO CATÁLOGO 🌟
       if (pedidoAvaliacao.anuncioId) {
-        // Puxa as estrelas atuais do anúncio
         const { data: anuncio, error: erroAnuncio } = await supabase
           .from('anuncios')
           .select('estrelas, totalAvaliacoes')
@@ -196,17 +186,13 @@ export default function MeusServicos() {
 
         if (!erroAnuncio && anuncio) {
           const totalAtual = anuncio.totalAvaliacoes || 0;
-          // Se for o primeiro serviço, a base é a nota que o cliente deu agora
           const mediaAtual = totalAtual === 0 ? notaEstrelas : (anuncio.estrelas || 5.0); 
 
-          // Calcula a nova média real
           let novaMedia = ((mediaAtual * totalAtual) + notaEstrelas) / (totalAtual + 1);
           
-          // Garante que a nota não passe de 5.0 nem fique com muitas casas decimais
           novaMedia = Math.min(5.0, parseFloat(novaMedia.toFixed(1)));
           const novoTotal = totalAtual + 1;
 
-          // Atualiza a vitrine pública do técnico
           await supabase
             .from('anuncios')
             .update({
@@ -218,7 +204,7 @@ export default function MeusServicos() {
       }
 
       toast.success("🎉 Avaliação salva! A reputação do técnico foi atualizada no catálogo.");
-      setPedidoAvaliacao(null); // Fecha o modal
+      setPedidoAvaliacao(null);
       
     } catch (error) {
       console.error(error);
@@ -246,7 +232,6 @@ export default function MeusServicos() {
     <div className="min-h-screen bg-slate-900 flex flex-col items-center pt-28 pb-20 px-4 relative">
       <Toaster position="top-center" reverseOrder={false} />
       
-      {/* MODAL DE AVALIAÇÃO COM ESTRELAS */}
       {pedidoAvaliacao && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
           <div className="bg-slate-800 rounded-[2rem] border border-slate-700 w-full max-w-sm p-8 shadow-2xl text-center">
@@ -307,7 +292,6 @@ export default function MeusServicos() {
               return (
                 <div key={pedido.id} className="bg-slate-800 p-6 md:p-8 rounded-3xl border border-slate-700 shadow-lg flex flex-col md:flex-row gap-6 justify-between items-start hover:shadow-xl transition-shadow relative overflow-hidden">
                   
-                  {/* Borda lateral colorida baseada no status */}
                   <div className={`absolute left-0 top-0 bottom-0 w-2 ${
                     pedido.status === 'concluido' ? 'bg-green-500' :
                     pedido.status === 'em_andamento' ? 'bg-blue-500' :
@@ -331,7 +315,6 @@ export default function MeusServicos() {
                       {abaAtiva === "cliente" ? `Técnico responsável: ${pedido.tecnicoNome}` : `Cliente: ${pedido.clienteNome}`}
                     </p>
                     
-                    {/* LINHA DO TEMPO INSERIDA AQUI NO MEIO DO CARD */}
                     <TimelineDoPedido statusAtual={pedido.status} />
 
                     <div className="mt-4 bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
@@ -376,13 +359,13 @@ export default function MeusServicos() {
                         {pedido.endereco && (
                           <div className="w-full mb-2 rounded-2xl overflow-hidden border border-slate-700 shadow-md bg-slate-800 h-32 relative">
                             <iframe 
-                          width="100%" 
-                          height="100%" 
-                          style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }} 
-                          loading="lazy" 
-                          referrerPolicy="no-referrer-when-downgrade" 
-                          src={`http://googleusercontent.com/maps.google.com/maps?q=${encodeURIComponent(pedido.endereco || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                        ></iframe>
+                              width="100%" 
+                              height="100%" 
+                              style={{ border: 0, filter: 'invert(90%) hue-rotate(180deg)' }} 
+                              loading="lazy" 
+                              referrerPolicy="no-referrer-when-downgrade" 
+                              src={`https://maps.google.com/maps?q=${encodeURIComponent(pedido.endereco || '')}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                            ></iframe>
                           </div>
                         )}
                         {pedido.status === 'pendente' && (
