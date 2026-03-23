@@ -61,7 +61,7 @@ export default function DetalhesAnuncio() {
     const buscarAvaliacoes = async () => {
       if (!id) return;
 
-      const { data, error } = await supabase
+      const { data, } = await supabase
         .from('avaliacoes')
         .select('*')
         .eq('anuncio_id', String(id))
