@@ -23,6 +23,7 @@ interface Pedido {
   status: string;
   nota?: number;
   tecnicoTelefone?: string;
+  prioridade?: string;
 }
 
 interface UsuarioLocal {
@@ -88,6 +89,7 @@ export default function MeusServicos() {
   
   const [pedidoAvaliacao, setPedidoAvaliacao] = useState<Pedido | null>(null);
   const [notaEstrelas, setNotaEstrelas] = useState(0);
+  const [comentario, setComentario] = useState('');
 
   useEffect(() => {
     const dadosSessao = localStorage.getItem("usuarioLogado");
@@ -164,6 +166,7 @@ export default function MeusServicos() {
   const abrirModalAvaliacao = (pedido: Pedido) => {
     setPedidoAvaliacao(pedido);
     setNotaEstrelas(0);
+    setComentario('');
   };
 
   const enviarAvaliacaoEConcluir = async () => {
@@ -178,6 +181,14 @@ export default function MeusServicos() {
       dispararNotificacao(pedidoAvaliacao.tecnicoId, `O cliente confirmou a conclusão de "${pedidoAvaliacao.tituloServico}" e te avaliou com ${notaEstrelas} estrelas!`);
       
       if (pedidoAvaliacao.anuncioId) {
+        if (comentario.trim() !== '') {
+          await supabase.from('avaliacoes').insert([{
+            anuncio_id: String(pedidoAvaliacao.anuncioId),
+            nota: notaEstrelas,
+            comentario: comentario
+          }]);
+        }
+
         const { data: anuncio, error: erroAnuncio } = await supabase
           .from('anuncios')
           .select('estrelas, totalAvaliacoes')
@@ -205,6 +216,7 @@ export default function MeusServicos() {
 
       toast.success("🎉 Avaliação salva! A reputação do técnico foi atualizada no catálogo.");
       setPedidoAvaliacao(null);
+      setComentario('');
       
     } catch (error) {
       console.error(error);
@@ -238,7 +250,7 @@ export default function MeusServicos() {
             <h2 className="text-2xl font-black text-white mb-2">Serviço Concluído!</h2>
             <p className="text-slate-400 text-sm mb-6">Como foi o atendimento de <span className="text-blue-400 font-bold">{pedidoAvaliacao.tecnicoNome}</span>?</p>
             
-            <div className="flex justify-center gap-2 mb-8">
+            <div className="flex justify-center gap-2 mb-6">
               {[1, 2, 3, 4, 5].map((estrela) => (
                 <button 
                   key={estrela}
@@ -249,6 +261,13 @@ export default function MeusServicos() {
                 </button>
               ))}
             </div>
+
+            <textarea 
+              placeholder="Opcional: Deixe um comentário sobre o serviço..."
+              value={comentario}
+              onChange={(e) => setComentario(e.target.value)}
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-slate-300 text-sm focus:outline-none focus:border-blue-500 mb-6 min-h-[80px]"
+            />
 
             <div className="flex gap-4">
               <button onClick={() => setPedidoAvaliacao(null)} className="flex-1 text-slate-400 font-bold hover:bg-slate-700 py-3 rounded-xl transition-colors border border-transparent hover:border-slate-600">
@@ -308,6 +327,16 @@ export default function MeusServicos() {
                       {pedido.status === 'recusado' && <span className="text-[10px] font-black text-red-400 bg-red-900/20 px-3 py-1.5 rounded-lg uppercase border border-red-800/50 line-through">Cancelado</span>}
                       
                       <span className="text-xs font-bold text-slate-500">{dataExibicao}</span>
+
+                      {pedido.prioridade && (
+                        <span className={`text-[10px] font-black px-3 py-1.5 rounded-lg uppercase border flex items-center gap-1 ${
+                          pedido.prioridade.toLowerCase() === 'urgente' 
+                            ? 'text-red-400 bg-red-900/40 border-red-800/50 shadow-[0_0_8px_rgba(239,68,68,0.3)] animate-pulse' 
+                            : 'text-blue-400 bg-blue-900/40 border-blue-800/50'
+                        }`}>
+                          {pedido.prioridade.toLowerCase() === 'urgente' ? '🚨' : '⚡'} {pedido.prioridade}
+                        </span>
+                      )}
                     </div>
 
                     <h3 className="text-xl font-black text-white">{pedido.tituloServico}</h3>
@@ -424,7 +453,7 @@ export default function MeusServicos() {
                 </div>
               );
             })
-          )}
+          )}  
         </div>
       </div>
     </div>

@@ -68,6 +68,13 @@ export default function Home() {
     }
   };
 
+  const formatarMoeda = (valor: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor || 0);
+  };
+
   let anunciosFiltrados = listaAnuncios.filter((a) => {
     const matchCat = categoriaAtiva === 'Todos' || a.categoria === categoriaAtiva;
     const matchBusca = a.titulo?.toLowerCase().includes(busca.toLowerCase());
@@ -104,7 +111,7 @@ export default function Home() {
             <div className="mb-8">
               <div className="flex justify-between mb-2">
                 <label className="text-xs font-bold text-slate-400 uppercase">Preço Máximo</label>
-                <span className="text-blue-400 font-bold text-xs">R$ {precoMax}</span>
+                <span className="text-blue-400 font-bold text-xs">{formatarMoeda(precoMax)}</span>
               </div>
               <input 
                 type="range" min="50" max="2000" step="50" 
@@ -195,7 +202,6 @@ export default function Home() {
                       {anuncio.autorNome} • {anuncio.cidade}
                     </div>
 
-                    {/* BLOCO NOVO: AVALIAÇÕES (ESTRELAS) NO CARD */}
                     <div className="flex items-center gap-1.5 bg-slate-900/50 inline-flex px-2 py-1 rounded-lg border border-slate-700/50">
                       <span className="text-amber-400 text-sm drop-shadow-[0_0_2px_rgba(251,191,36,0.8)]">★</span>
                       <span className="text-xs font-black text-white">

@@ -16,8 +16,8 @@ interface Anuncio {
   cidade: string;
   bairro: string;
   certificacoes?: string[];
-  estrelas?: number;          // <-- ADICIONADO PARA PUXAR A NOTA
-  totalAvaliacoes?: number;   // <-- ADICIONADO PARA PUXAR O TOTAL
+  estrelas?: number;
+  totalAvaliacoes?: number;
 }
 
 export default function DetalhesAnuncio() {
@@ -25,6 +25,7 @@ export default function DetalhesAnuncio() {
   const navigate = useNavigate();
   const [anuncio, setAnuncio] = useState<Anuncio | null>(null);
   const [loading, setLoading] = useState(true);
+  const [listaAvaliacoes, setListaAvaliacoes] = useState<any[]>([]);
 
   const [modalAberto, setModalAberto] = useState(false);
   const [problema, setProblema] = useState("");
@@ -54,6 +55,22 @@ export default function DetalhesAnuncio() {
     };
 
     carregarAnuncio();
+  }, [id]);
+
+  useEffect(() => {
+    const buscarAvaliacoes = async () => {
+      if (!id) return;
+
+      const { data, error } = await supabase
+        .from('avaliacoes')
+        .select('*')
+        .eq('anuncio_id', String(id))
+        .order('criado_em', { ascending: false });
+
+      if (data) setListaAvaliacoes(data);
+    };
+
+    buscarAvaliacoes();
   }, [id]);
 
   const dispararNotificacao = async (usuarioId: string | number, mensagem: string) => {
@@ -119,7 +136,7 @@ export default function DetalhesAnuncio() {
 
       const novoPedido = {
         id: Date.now().toString(),
-        anuncioId: anuncio?.id, // <-- JÁ ESTAVA AQUI! PERFEITO!
+        anuncioId: anuncio?.id,
         tituloServico: anuncio?.titulo,
         tecnicoId: anuncio?.autorId,
         tecnicoNome: anuncio?.autorNome,
@@ -169,7 +186,6 @@ export default function DetalhesAnuncio() {
     <div className="min-h-screen bg-slate-900 pt-28 pb-20 px-4 relative">
       <Toaster position="top-center" reverseOrder={false} />
 
-      {/* MODAL DE SOLICITAÇÃO */}
       {modalAberto && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
           <div className="bg-slate-800 rounded-[2rem] border border-slate-700 w-full max-w-lg p-8 shadow-2xl">
@@ -219,7 +235,6 @@ export default function DetalhesAnuncio() {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-slate-800 p-8 rounded-[2.5rem] shadow-xl border border-slate-700">
             
-            {/* CABEÇALHO DO ANÚNCIO COM A NOTA */}
             <div className="flex items-center gap-3 mb-2">
               <span className="bg-blue-900/30 text-blue-400 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider border border-blue-800/50">
                 {anuncio.categoria}
@@ -246,7 +261,6 @@ export default function DetalhesAnuncio() {
             <h3 className="font-black text-white mb-3">Descrição do Serviço</h3>
             <p className="text-slate-400 leading-relaxed mb-8">{anuncio.descricao}</p>
 
-            {/* SEÇÃO NOVA: FICHA TÉCNICA */}
             <h3 className="font-black text-white mb-4 pt-6 border-t border-slate-700/50">Ficha Técnica</h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -261,7 +275,6 @@ export default function DetalhesAnuncio() {
               </div>
             </div>
 
-            {/* CERTIFICAÇÕES COMO BADGES */}
             {anuncio.certificacoes && anuncio.certificacoes.length > 0 && (
               <div className="mt-4">
                 <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">🎓 Certificações e Especialidades</p>
@@ -275,6 +288,42 @@ export default function DetalhesAnuncio() {
                 </div>
               </div>
             )}
+
+            <div className="mt-10 pt-8 border-t border-slate-700 w-full">
+              <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
+                ⭐ Avaliações dos Clientes
+              </h3>
+              
+              {listaAvaliacoes.length === 0 ? (
+                <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 text-center">
+                  <p className="text-slate-400">Nenhuma avaliação ainda. Seja o primeiro a avaliar após o serviço!</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {listaAvaliacoes.map((aval) => (
+                    <div key={aval.id} className="bg-slate-800 p-5 rounded-2xl border border-slate-700 shadow-md">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex gap-1 text-amber-400 text-lg">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i} className={i < aval.nota ? 'drop-shadow-[0_0_5px_rgba(251,191,36,0.4)]' : 'text-slate-600'}>
+                              {i < aval.nota ? '★' : '☆'}
+                            </span>
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-500">
+                          {new Date(aval.criado_em).toLocaleDateString('pt-BR')}
+                        </span>
+                      </div>
+                      
+                      {aval.comentario && (
+                        <p className="text-slate-300 italic text-sm mt-3">"{aval.comentario}"</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
 
